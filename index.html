@@ -3,125 +3,88 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tra Cứu Điểm Thi</title>
-    <!-- Logo trên tab -->
-    <link rel="icon" href="assets/logo/logo.png">
-
-    <!-- Hệ thống liên kết CSS đồng bộ theo sơ đồ chốt -->
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/components.css">
-    <link rel="stylesheet" href="css/animation.css">
-    <link rel="stylesheet" href="css/responsive.css">
+    <title>Tra Cứu Điểm Thi Tuyển Sinh</title>
+    <!-- SỬA LỖI VỠ GIAO DIỆN: Chuẩn hóa đường dẫn CSS cho host Render -->
+    <link rel="stylesheet" href="./css/style.css">
+    <link rel="stylesheet" href="./css/components.css">
 </head>
 <body>
-
-    <!-- ================= HEADER ================= -->
-    <header class="header">
-        <div class="logo-area">
-            <img src="assets/logo/logo.png" alt="Logo" class="logo">
-            <div class="title-area">
-                <h1>TRA CỨU ĐIỂM THI</h1>
-                <p>Hệ thống tra cứu kết quả thi</p>
+    <div class="container animate-fade-in">
+        <!-- KHỐI 1: Ô NHẬP TÌM KIẾM SBD -->
+        <main class="search-card glass">
+            <div class="mascot-container">
+                <img src="./assets/mascot.png" alt="Mascot Chú Chuột" class="mascot-img">
             </div>
-        </div>
-    </header>
-
-    <!-- ================= MAIN CONTAINER ================= -->
-    <main class="container">
-        
-        <!-- Search Card -->
-        <section class="search-card glass">
-            <h2>Tra cứu bằng số báo danh</h2>
+            <h2>TRA CỨU ĐIỂM THI</h2>
+            <p class="subtitle">Nhập số báo danh hoặc mã định danh của bạn</p>
+            
             <div class="input-group">
-                <img src="assets/icons/search.png" class="input-icon" alt="Search">
-                <input id="sbd" type="text" maxlength="20" placeholder="Nhập số báo danh">
+                <img src="./assets/search-icon.png" alt="Search" class="input-icon">
+                <input type="text" id="sbd" placeholder="Ví dụ: 550154, 550300..." autocomplete="off">
             </div>
-            <button id="searchBtn" class="search-button">TRA CỨU</button>
-        </section>
+            
+            <button id="searchBtn" class="search-button">TRA CỨU KẾT QUẢ</button>
+        </main>
 
-        <!-- Loading Box -->
-        <section id="loading" class="loading-box">
-            <img src="assets/icons/loading.png" alt="Loading">
-            <p>Đang tra cứu...</p>
-        </section>
+        <!-- KHỐI LOADING XOAY XOAY -->
+        <div id="loading" class="loading-box glass" style="display: none;">
+            <img src="./assets/loading.png" alt="Đang tải dữ liệu" class="spinner">
+            <p>Hệ thống đang kết nối dữ liệu thật Sở GD&ĐT...</p>
+        </div>
 
-        <!-- Notification Box -->
-        <section id="notification" class="notification"></section>
-
-        <!-- Candidate Info Card -->
-        <section id="candidate" class="candidate-card glass">
+        <!-- KHỐI 2: THÔNG TIN THÍ SINH (ẨN MẶC ĐỊNH) -->
+        <section id="candidate" class="candidate-card glass" style="display: none;">
             <h2>Thông tin thí sinh</h2>
+            
+            <!-- Khung thông báo trạng thái hồ sơ bóc tách từ cổng tuyển sinh Tây Ninh -->
+            <div id="apiStatusNotice" style="background: rgba(255, 149, 0, 0.15); border: 1px solid #ff9500; color: #ff9500; padding: 12px; border-radius: 10px; margin-bottom: 16px; font-size: 13px; font-weight: 600;">
+                ⚠️ Đã tìm thấy dữ liệu hồ sơ. Hiện tại hệ thống chỉ cho phép tra cứu hồ sơ, chưa có dữ liệu điểm thi trực tuyến.
+            </div>
+
             <div class="candidate-grid">
                 <div>
-                    <span>Họ tên</span>
+                    <span>Họ và Tên</span>
                     <strong id="studentName">--</strong>
                 </div>
                 <div>
-                    <span>Số báo danh</span>
+                    <span>Mã định danh / SBD</span>
                     <strong id="studentID">--</strong>
                 </div>
                 <div>
-                    <span>Phòng thi</span>
+                    <span>Phòng thi số</span>
                     <strong id="examRoom">--</strong>
                 </div>
             </div>
         </section>
 
-        <!-- Score Results Card -->
-        <section id="scoreCard" class="score-card glass">
-            <h2>Kết quả</h2>
+        <!-- KHỐI 3: BẢNG KẾT QUẢ ĐIỂM THI ĐỘNG (ẨN MẶC ĐỊNH) -->
+        <section id="scoreCard" class="score-card glass" style="display: none;">
+            <h2>Kết quả thi tuyển sinh</h2>
             <div class="table-container">
                 <table>
+                    <!-- Nội dung bảng sẽ được js/search.js tự động vẽ lại thông minh tùy theo trạng thái điểm -->
                     <thead>
                         <tr>
-                            <th>Môn</th>
-                            <th>Thời gian thi</th>
-                            <th>Địa điểm thi</th>
-                            <th>Bắt đầu làm bài</th>
-                            <th>Điểm</th>
+                            <th>Môn học</th>
+                            <th>Trạng thái kết quả</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
                             <td>Toán</td>
-                            <td id="mathTime">--</td>
-                            <td id="mathLocation">--</td>
-                            <td id="mathStart">--</td>
-                            <td id="mathScore" class="score-highlight">--</td>
-                        </tr>
-                        <tr>
-                            <td>Ngữ văn</td>
-                            <td id="literatureTime">--</td>
-                            <td id="literatureLocation">--</td>
-                            <td id="literatureStart">--</td>
-                            <td id="literatureScore" class="score-highlight">--</td>
-                        </tr>
-                        <tr>
-                            <td>Tiếng Anh</td>
-                            <td id="englishTime">--</td>
-                            <td id="englishLocation">--</td>
-                            <td id="englishStart">--</td>
-                            <td id="englishScore" class="score-highlight">--</td>
+                            <td>--</td>
                         </tr>
                     </tbody>
                 </table>
             </div>
         </section>
-    </main>
+    </div>
 
-    <!-- ================= FOOTER ================= -->
-    <footer>
-        © 2026 Tra cứu điểm chủ tịch Chuột
-    </footer>
+    <!-- KHỐI THÔNG BÁO TOAST FLOATING -->
+    <div id="notification" class="notification"></div>
 
-    <!-- Hệ thống liên kết Core Script JavaScript đúng quy ước sơ đồ -->
-    <script src="js/app.js"></script>
-    <script src="js/api.js"></script>
-    <script src="js/search.js"></script>
-    <script src="js/loading.js"></script>
-    <script src="js/notification.js"></script>
-    <script src="js/animation.js"></script>
-    <script src="js/particles.js"></script>
-    <script src="js/confetti.js"></script>
+    <!-- SỬA LỖI VỠ GIAO DIỆN: Chuẩn hóa đường dẫn file JavaScript cho host Render -->
+    <script src="./js/api.js"></script>
+    <script src="./js/search.js"></script>
 </body>
 </html>
