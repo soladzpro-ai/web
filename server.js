@@ -1,57 +1,71 @@
-// server.js - File khởi chạy máy chủ Proxy Node.js trên Render
-import express from 'express';
-import path from 'path';
-import { fileURLToPath } from 'url';
-
-const app = express();
-const PORT = process.env.PORT || 3000;
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-app.use(express.json());
-
-// Cho phép trình duyệt truy cập công khai toàn bộ thư mục giao diện tĩnh
-app.use(express.static(__dirname));
-
 /**
- * Cổng API Máy chủ đứng ra bốc dữ liệu thật Form Data trực tiếp lên cổng của Sở
+ * js/api.js
+ * Phiên bản Production: Đồng bộ dữ liệu thực tế 100% qua máy chủ trung gian
+ * Nói không với tạo tên sẵn, nói không với điểm ảo!
  */
-app.post('/api/get-shed-data', async (req, res) => {
-    try {
-        const { soBaoDanh } = req.body;
-        const targetUrl = 'https://tayninh.edu.vn';
+const ExamAPI = {
+    // Trỏ trực tiếp vào API máy chủ Node.js độc lập của bạn trên Render
+    PROXY_ENDPOINT: '/api/get-real-data',
 
-        // Đóng gói chuỗi Form Data x-www-form-urlencoded chuẩn cấu trúc tab Network của bạn
-        const rawBody = `soBaoDanh=${encodeURIComponent(soBaoDanh.trim())}`;
-
-        const response = await fetch(targetUrl, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
-                'Accept': 'application/json, text/plain, */*',
-                'Origin': 'https://tayninh.edu.vn',
-                'Referer': 'https://tayninh.edu.vn/'
-            },
-            body: rawBody
-        });
-
-        if (!response.ok) {
-            return res.status(response.status).json({ error: "Sở từ chối kết nối" });
+    async fetchFullData(sbd) {
+        if (!sbd || sbd.trim() === "") {
+            return { success: false, message: "Vui lòng nhập số báo danh / số định danh hợp lệ!" };
         }
 
-        const data = await response.json();
-        return res.status(200).json(data);
-    } catch (error) {
-        return res.status(500).json({ error: error.message });
+        const cleanSBD = sbd.trim();
+
+        try {
+            // Gửi yêu cầu qua máy chủ Render để xử lý bẻ gãy bộ chặn CORS của trình duyệt
+            const response = await fetch(this.PROXY_ENDPOINT, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ soBaoDanh: cleanSBD })
+            });
+
+            if (!response.ok) throw new Error("Mạng gián đoạn");
+
+            const resData = await response.json();
+
+            // Nếu máy chủ backend báo lỗi kết nối từ xa từ Sở
+            if (!resData.success) {
+                return { success: false, message: "Hệ thống mạng từ xa của Sở bị gián đoạn. Thử lại sau!" };
+            }
+
+            const studentRaw = resData.data;
+
+            // KIỂM TRA HỒ SƠ THẬT: Nếu hệ thống thật của Sở trả về trống (SBD nhập sai số hoặc không tồn tại)
+            if (!studentRaw || Object.keys(studentRaw).length === 0 || (!studentRaw.HoTen && !studentRaw.hoTen && !studentRaw.TenHocSinh)) {
+                return { success: false, message: "Mã tra cứu này không tồn tại trên cơ sở dữ liệu gốc của Sở Tây Ninh!" };
+            }
+
+            // BÓC TÁCH CHUẨN XÁC DỮ LIỆU REAL 100% ĐỔ LÊN MÀN HÌNH
+            const hoTenThat = studentRaw.HoTen || studentRaw.hoTen || studentRaw.TenHocSinh;
+            const phongThiThat = studentRaw.PhongThi || studentRaw.phongThi || "N/A";
+            const maHoso = studentRaw.SoBaoDanh || studentRaw.soBaoDanh || cleanSBD;
+
+            return {
+                success: true,
+                student: {
+                    HoTen: hoTenThat.toUpperCase(),
+                    SoBaoDanh: maHoso,
+                    PhongThi: phongThiThat
+                },
+                scores: {
+                    Math: { Score: "Chưa có" },
+                    Literature: { Score: "Chưa có" },
+                    English: { Score: "Chưa có" }
+                },
+                isNotice: true // Giữ nguyên thông báo hồ sơ thông minh khớp hiện trạng chưa công bố điểm của Sở
+            };
+
+        } catch (error) {
+            console.error("Lỗi luồng xử lý mạng:", error);
+            return {
+                success: false,
+                message: "Không thể kết nối máy chủ trung gian. Vui lòng thử lại!"
+            };
+        }
     }
-});
+};
 
-// Định tuyến mặc định nạp file giao diện index.html
-app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html'));
-});
-
-app.listen(PORT, () => {
-    console.log(`Máy chủ trung gian Render đang khởi động tại cổng ${PORT}`);
-});
+window.ExamAPI = ExamAPI;
