@@ -1,0 +1,210 @@
+/* ================= NỀN MỜ KÍNH (GLASSMORPHISM) ================= */
+.glass {
+    background: rgba(255, 255, 255, 0.95); /* Tối ưu nền sáng để các thẻ tiêu đề hiển thị rõ */
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 20px;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1);
+}
+
+/* ================= SEARCH CARD ================= */
+.search-card {
+    width: 100%;
+    text-align: center;
+}
+
+.search-card h2 {
+    font-size: 15px;
+    margin-bottom: 16px;
+    color: #333333;
+    font-weight: 600;
+}
+
+/* ================= INPUT GROUP (SỬA LỖI ẨN CHỮ) ================= */
+.input-group {
+    display: flex;
+    align-items: center;
+    background: #ffffff;
+    border: 1px solid #cccccc;
+    border-radius: 12px;
+    padding: 12px 16px;
+    margin-bottom: 14px;
+    transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.input-group:focus-within {
+    border-color: #007aff;
+    box-shadow: 0 0 10px rgba(0, 122, 255, 0.2);
+}
+
+.input-icon {
+    width: 18px;
+    height: 18px;
+    margin-right: 12px;
+    opacity: 0.6;
+}
+
+/* SỬA LỖI: Chữ khi gõ vào sẽ có màu đen đậm cực kỳ rõ nét */
+.input-group input {
+    border: none;
+    outline: none;
+    width: 100%;
+    font-size: 15px;
+    background: transparent;
+    color: #1a1a1a !important; 
+    font-weight: 600;
+}
+
+.input-group input::placeholder {
+    color: #999999;
+}
+
+/* ================= NÚT BẤM ĐỔI 16M MÀU CHẬM ================= */
+.search-button {
+    width: 100%;
+    padding: 14px;
+    border: none;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 700;
+    color: #ffffff;
+    cursor: pointer;
+    letter-spacing: 0.5px;
+    
+    background: linear-gradient(270deg, 
+        rgba(255, 45, 85, 0.9),   
+        rgba(255, 149, 0, 0.9),  
+        rgba(255, 204, 0, 0.9),  
+        rgba(52, 199, 89, 0.9),  
+        rgba(90, 200, 250, 0.9), 
+        rgba(0, 122, 255, 0.9),  
+        rgba(139, 92, 246, 0.9),  
+        rgba(255, 45, 85, 0.9)   
+    );
+    background-size: 1600% 1600%;
+    animation: gradientMove 30s ease infinite;
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+}
+
+button:hover, .search-button:hover {
+    transform: scale(1.1);
+    box-shadow: 0 8px 25px rgba(0, 122, 255, 0.25);
+}
+
+button:active, .search-button:active {
+    transform: scale(0.96);
+}
+
+@keyframes gradientMove {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* ================= LOADING BOX ================= */
+.loading-box {
+    display: none;
+    text-align: center;
+    margin: 25px 0;
+}
+
+.loading-box img {
+    width: 38px;
+    height: 38px;
+}
+
+.loading-box p {
+    margin-top: 10px;
+    font-size: 13px;
+    color: #666666;
+}
+
+/* ================= TOAST NOTIFICATION ================= */
+.notification {
+    position: fixed;
+    top: 25px;
+    right: 25px;
+    min-width: 260px;
+    padding: 14px 18px;
+    border-radius: 12px;
+    color: white;
+    font-size: 14px;
+    font-weight: 500;
+    display: none;
+    z-index: 1000;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+/* ================= CANDIDATE INFO (SỬA LỖI MÀU CHỮ) ================= */
+.candidate-card h2, .score-card h2 {
+    font-size: 15px;
+    margin-bottom: 16px;
+    font-weight: 700;
+    color: #1a1a1a;
+    border-left: 4px solid #007aff;
+    padding-left: 10px;
+}
+
+.candidate-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+}
+
+.candidate-grid div {
+    background: #f5f7fa;
+    padding: 12px 14px;
+    border-radius: 10px;
+    border: 1px solid #e5e9f0;
+}
+
+.candidate-grid span {
+    display: block;
+    font-size: 12px;
+    color: #777777;
+    margin-bottom: 4px;
+}
+
+.candidate-grid strong {
+    display: block;
+    font-size: 14px;
+    color: #1a1a1a;
+}
+
+/* ================= BẢNG ĐIỂM THI (SỬA LỖI MÀU CHỮ) ================= */
+.table-container {
+    width: 100%;
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 600px;
+}
+
+th, td {
+    padding: 12px 14px;
+    text-align: left;
+    font-size: 14px;
+    border-bottom: 1px solid #e5e9f0;
+}
+
+th {
+    background: #f5f7fa;
+    color: #555555;
+    font-weight: 600;
+}
+
+td {
+    color: #333333;
+}
+
+.score-highlight {
+    font-weight: 700;
+    color: #007aff !important; /* Điểm số hiển thị màu xanh dương nổi bật */
+}

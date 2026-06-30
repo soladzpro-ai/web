@@ -1,0 +1,67 @@
+/* ================= THIẾT LẬP CƠ BẢN ================= */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    /* Ép màu nền tối #121526 làm nền chủ đạo để chữ trắng luôn luôn hiển thị */
+    background: #121526 url('../assets/backgrounds/bg.png') no-repeat center center fixed;
+    background-size: cover;
+    color: #ffffff !important; /* Bắt buộc toàn bộ chữ mặc định là màu trắng */
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+.container {
+    flex: 1;
+    width: 100%;
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 10px 20px 30px;
+}
+
+/* ================= HEADER & SỬA LỖI LOGO ================= */
+.header {
+    width: 100%;
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 40px 20px 15px;
+}
+
+.logo-area {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.logo {
+    width: 60px;
+    height: 60px;
+    object-fit: contain;
+    filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.3));
+}
+
+.title-area h1 {
+    font-size: 24px;
+    font-weight: 700;
+    color: #ffffff !important;
+}
+
+.title-area p {
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.6) !important;
+    margin-top: 1px;
+}
+
+/* ================= FOOTER ================= */
+footer {
+    text-align: center;
+    padding: 25px;
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.4) !important;
+}
